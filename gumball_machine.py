@@ -105,14 +105,18 @@ def _print_menu(balance: int):
     print()
     print(f"  Balance: {_format_cents(balance)}")
     print("  ─────────────────────────────────")
-    print("  [1] Insert nickel")
-    print("  [2] Insert dime")
-    print("  [3] Insert quarter")
-    print("  [4] Dispense RED gumball   (5¢)")
-    print("  [5] Dispense YELLOW gumball (10¢)")
-    print("  [6] Return my change")
-    print("  [7] Quit")
+    print("  [1] Insert coin")
+    print("  [2] Dispense RED gumball   (5¢)")
+    print("  [3] Dispense YELLOW gumball (10¢)")
+    print("  [4] Return my change")
+    print("  [5] Quit")
     print()
+
+def _print_coin_type():
+    print()
+    print("  Enter 'N' or 'n' for nickel (5¢)")
+    print("  Enter 'D' or 'd' for dime (10¢)")
+    print("  Enter 'Q' or 'q' for quarter (25¢)")
 
 
 def main():
@@ -121,35 +125,41 @@ def main():
 
     while True:
         _print_menu(machine.balance)
-        choice = input("  Choose [1-7]: ").strip()
+        choice = input("  Choose [1-5]: ").strip()
 
         if choice == "1":
-            result = machine.insert_coin("nickel")
-            print(f"  >> Inserted nickel. Balance: {_format_cents(result['balance'])}")
+            _print_coin_type()
+            coin_inserted = input("  >> Insert coin: ").strip().lower()
+            if coin_inserted == "n":
+                result = machine.insert_coin("nickel")
+                print(f"  >> Inserted nickel. Balance: {_format_cents(result['balance'])}")
+
+            elif coin_inserted == "d":
+                result = machine.insert_coin("dime")
+                print(f"  >> Inserted dime. Balance: {_format_cents(result['balance'])}")
+
+            elif coin_inserted == "q":
+                result = machine.insert_coin("quarter")
+                print(f"  >> Inserted quarter. Balance: {_format_cents(result['balance'])}")
+            
+            else:
+                print("Invalid currency!")
 
         elif choice == "2":
-            result = machine.insert_coin("dime")
-            print(f"  >> Inserted dime. Balance: {_format_cents(result['balance'])}")
-
-        elif choice == "3":
-            result = machine.insert_coin("quarter")
-            print(f"  >> Inserted quarter. Balance: {_format_cents(result['balance'])}")
-
-        elif choice == "4":
             result = machine.dispense("red")
             if result["dispensed"]:
                 print(f"  >> *clunk* A RED gumball rolls out! Balance: {_format_cents(result['balance'])}")
             else:
                 print(f"  >> {result['reason']}")
 
-        elif choice == "5":
+        elif choice == "3":
             result = machine.dispense("yellow")
             if result["dispensed"]:
                 print(f"  >> *clunk* A YELLOW gumball rolls out! Balance: {_format_cents(result['balance'])}")
             else:
                 print(f"  >> {result['reason']}")
 
-        elif choice == "6":
+        elif choice == "4":
             result = machine.return_change()
             if result["returned"] == 0:
                 print("  >> No change to return.")
@@ -164,7 +174,7 @@ def main():
                     parts.append(f"{b['nickels']} nickel(s)")
                 print(f"  >> Returned {_format_cents(result['returned'])}: {', '.join(parts)}")
 
-        elif choice == "7":
+        elif choice == "5":
             if machine.balance > 0:
                 result = machine.return_change()
                 b = result["breakdown"]
@@ -178,7 +188,7 @@ def main():
                 print(f"  >> Returning your change: {_format_cents(result['returned'])} ({', '.join(parts)})")
             print("  >> Goodbye!")
             break
-
+        
         else:
             print("  >> Invalid choice. Please pick 1-7.")
 

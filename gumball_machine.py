@@ -23,13 +23,19 @@ GUMBALL_PRICES = {
 
 
 class GumballMachine:
+    
     def __init__(self):
+        """Initialize the gumball machine with balance = 0"""
         self.balance = 0  # cents
 
     def insert_coin(self, coin: str) -> dict:
-        """Insert a coin. Returns result with accepted/rejected status."""
-        coin = coin.strip().lower()
-        if coin in VALID_COINS:
+        """
+        Insert a coin. Returns result with accepted/rejected status.
+        :param coin: string
+        :return: dictionary
+        """
+        coin = coin.strip().lower() # Remove leading and trailing whitespaces, make lowercase
+        if coin in VALID_COINS: # Check to see if valid coin type
             self.balance += VALID_COINS[coin]
             return {
                 "accepted": True,
@@ -44,16 +50,20 @@ class GumballMachine:
         }
 
     def dispense(self, color: str) -> dict:
-        """Pull a dispenser lever. Returns result with success/failure."""
-        color = color.strip().lower()
-        if color not in GUMBALL_PRICES:
+        """
+        Pull a dispenser lever. Returns result with success/failure.
+        :param color: string
+        :return: dictionary
+        """
+        color = color.strip().lower() # Remove leading and trailing whitespaces, make lowercase
+        if color not in GUMBALL_PRICES: # Check if valid gumball type
             return {
                 "dispensed": False,
                 "reason": f"Unknown gumball type: {color}",
                 "balance": self.balance,
             }
         price = GUMBALL_PRICES[color]
-        if self.balance < price:
+        if self.balance < price: # Check if user has sufficient balance
             return {
                 "dispensed": False,
                 "reason": f"Insufficient balance. Need {price}¢, have {self.balance}¢.",
@@ -68,7 +78,10 @@ class GumballMachine:
         }
 
     def return_change(self) -> dict:
-        """Pull the 'Return My Change' lever."""
+        """
+        Pull the 'Return My Change' lever.
+        :return: dictionary
+        """
         change = self.balance
         self.balance = 0
         quarters, remainder = divmod(change, 25)
@@ -93,6 +106,7 @@ def _format_cents(cents: int) -> str:
 
 
 def _print_banner():
+    """Print the banner for the machine"""
     print("=" * 50)
     print("       GUMBALL VENDING MACHINE")
     print("=" * 50)
@@ -102,6 +116,10 @@ def _print_banner():
 
 
 def _print_menu(balance: int):
+    """
+    Print the menu for user to choose
+    :param balance: integer
+    """
     print()
     print(f"  Balance: {_format_cents(balance)}")
     print("  ─────────────────────────────────")
@@ -113,23 +131,26 @@ def _print_menu(balance: int):
     print()
 
 def _print_coin_type():
+    """Print the coin options for user"""
     print()
     print("  Enter 'N' or 'n' for nickel (5¢)")
     print("  Enter 'D' or 'd' for dime (10¢)")
     print("  Enter 'Q' or 'q' for quarter (25¢)")
+    print()
 
 
 def main():
-    machine = GumballMachine()
+    machine = GumballMachine() # Create a GumballMachine object
     _print_banner()
 
     while True:
         _print_menu(machine.balance)
         choice = input("  Choose [1-5]: ").strip()
 
-        if choice == "1":
+        if choice == "1": # Insert coin
             _print_coin_type()
             coin_inserted = input("  >> Insert coin: ").strip().lower()
+            # Check for valid coin type
             if coin_inserted == "n":
                 result = machine.insert_coin("nickel")
                 print(f"  >> Inserted nickel. Balance: {_format_cents(result['balance'])}")
@@ -141,25 +162,24 @@ def main():
             elif coin_inserted == "q":
                 result = machine.insert_coin("quarter")
                 print(f"  >> Inserted quarter. Balance: {_format_cents(result['balance'])}")
-            
             else:
-                print("Invalid currency!")
+                print("  Invalid currency! Your coin is returned on the push of the dispenses lever.")
 
-        elif choice == "2":
+        elif choice == "2": # Dispense RED gumball
             result = machine.dispense("red")
             if result["dispensed"]:
                 print(f"  >> *clunk* A RED gumball rolls out! Balance: {_format_cents(result['balance'])}")
             else:
                 print(f"  >> {result['reason']}")
 
-        elif choice == "3":
+        elif choice == "3": # Dispense YELLOW gumball
             result = machine.dispense("yellow")
             if result["dispensed"]:
                 print(f"  >> *clunk* A YELLOW gumball rolls out! Balance: {_format_cents(result['balance'])}")
             else:
                 print(f"  >> {result['reason']}")
 
-        elif choice == "4":
+        elif choice == "4": # Dispense change
             result = machine.return_change()
             if result["returned"] == 0:
                 print("  >> No change to return.")
@@ -174,7 +194,7 @@ def main():
                     parts.append(f"{b['nickels']} nickel(s)")
                 print(f"  >> Returned {_format_cents(result['returned'])}: {', '.join(parts)}")
 
-        elif choice == "5":
+        elif choice == "5": # Quit
             if machine.balance > 0:
                 result = machine.return_change()
                 b = result["breakdown"]
@@ -190,7 +210,7 @@ def main():
             break
         
         else:
-            print("  >> Invalid choice. Please pick 1-7.")
+            print("  >> Invalid choice. Please pick 1-5.")
 
 
 if __name__ == "__main__":

@@ -133,9 +133,10 @@ def _print_menu(balance: int):
 def _print_coin_type():
     """Print the coin options for user"""
     print()
-    print("  Enter 'N' or 'n' for nickel (5¢)")
-    print("  Enter 'D' or 'd' for dime (10¢)")
-    print("  Enter 'Q' or 'q' for quarter (25¢)")
+    print("  Acceptable denominations:")
+    print("  + Nickel (5¢)")
+    print("  + Dime (10¢)")
+    print("  + Quarter (25¢)")
     print()
 
 
@@ -150,18 +151,9 @@ def main():
         if choice == "1": # Insert coin
             _print_coin_type()
             coin_inserted = input("  >> Insert coin: ").strip().lower()
-            # Check for valid coin type
-            if coin_inserted == "n":
-                result = machine.insert_coin("nickel")
-                print(f"  >> Inserted nickel. Balance: {_format_cents(result['balance'])}")
-
-            elif coin_inserted == "d":
-                result = machine.insert_coin("dime")
-                print(f"  >> Inserted dime. Balance: {_format_cents(result['balance'])}")
-
-            elif coin_inserted == "q":
-                result = machine.insert_coin("quarter")
-                print(f"  >> Inserted quarter. Balance: {_format_cents(result['balance'])}")
+            result = machine.insert_coin(coin_inserted)
+            if result['accepted']:
+                print(f"  >> Inserted {result['coin']}. Balance: {_format_cents(result['balance'])}")
             else:
                 print("  Invalid currency! Your coin is returned on the push of the dispenses lever.")
 

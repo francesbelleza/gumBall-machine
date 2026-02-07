@@ -126,7 +126,7 @@ def _print_menu(balance: int):
     print("  [1] Insert coin")
     print("  [2] Dispense RED gumball   (5¢)")
     print("  [3] Dispense YELLOW gumball (10¢)")
-    print("  [4] Return my change")
+    print("  [4] Return My Change")
     print("  [5] Quit")
     print()
 
